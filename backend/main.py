@@ -11,15 +11,16 @@ Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="SportSpot API", version="1.0.0")
 
-origins = [
-    "http://localhost:3000",
-    "http://localhost:3001",
-    "http://127.0.0.1:3000",
-]
+# Allowed browser origins. Local dev defaults, plus any comma-separated URLs from
+# the CORS_ORIGINS env var (set your deployed frontend URL there on Render), and
+# any *.vercel.app deployment via regex.
+_default_origins = "http://localhost:3000,http://localhost:3001,http://127.0.0.1:3000"
+origins = [o.strip() for o in os.getenv("CORS_ORIGINS", _default_origins).split(",") if o.strip()]
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
+    allow_origin_regex=r"https://.*\.vercel\.app",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

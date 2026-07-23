@@ -1,4 +1,4 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'https://sports-sphere-xf0v.onrender.com';
 
 export interface ApiError {
   detail: string;

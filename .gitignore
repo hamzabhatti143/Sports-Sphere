@@ -1,0 +1,35 @@
+# ---- Secrets (NEVER commit) ----
+.env
+*.local.env
+
+# ---- Python (backend) ----
+venv/
+.venv/
+__pycache__/
+*.py[oc]
+*.egg-info/
+backend/*.db
+backend/sportspot_test.db
+
+# ---- Node (frontend + bot) ----
+node_modules/
+.next/
+out/
+npm-debug.log*
+
+# ---- WhatsApp bot runtime state ----
+playzone-agents/.wwebjs_auth/
+playzone-agents/.wwebjs_cache/
+playzone-agents/logs/
+.pm2/
+
+# ---- Logs / temp ----
+*.log
+frontend-dev-new.log
+error.txt
+
+# ---- Editor / OS ----
+.DS_Store
+.idea/
+.vscode/
+Capture*.PNG

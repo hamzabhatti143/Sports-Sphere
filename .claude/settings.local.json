@@ -1,0 +1,29 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(head *)",
+      "Bash(python -m alembic init alembic)",
+      "PowerShell(Stop-Process *)",
+      "Bash(docker-compose up *)",
+      "Bash(docker compose up *)",
+      "Bash(cat)",
+      "Bash(export DATABASE_URL=sqlite:///./sportspot_test.db)",
+      "Bash(python -c \"from app.db import engine, Base; from app.models import *; Base.metadata.create_all\\(bind=engine\\); print\\('✓ Database schema created successfully'\\)\")",
+      "Bash(python -c \"from app.db import engine, Base; from app.models import *; Base.metadata.create_all\\(bind=engine\\); print\\('Database schema created successfully'\\)\")",
+      "Bash(python -c ' *)",
+      "Bash(python seed.py)",
+      "Bash(python -m alembic revision --autogenerate -m \"Initial migration with all models\")",
+      "Bash(npm run *)",
+      "PowerShell(taskkill *)",
+      "Bash(node -e \"const l=require\\('lucide-react'\\); ['Volleyball','Trophy','Goal','Medal','Activity','Zap'].forEach\\(n=>console.log\\(n, n in l ? 'OK':'missing'\\)\\)\")",
+      "Bash(npx tsc *)",
+      "Bash(echo \"=== TSC EXIT $? ===\")",
+      "Bash(./venv/Scripts/python.exe -c ' *)",
+      "Bash(export PUPPETEER_SKIP_DOWNLOAD=true)",
+      "Bash(export PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true)",
+      "Bash(npm install *)",
+      "Bash(node -e \"console.log\\(require\\('whatsapp-web.js/package.json'\\).version\\)\")",
+      "Bash(echo \"version now: $\\(node -e \"console.log\\(require\\('whatsapp-web.js/package.json'\\).version\\)\"\\)\")"
+    ]
+  }
+}

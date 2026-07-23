@@ -1,0 +1,118 @@
+@import "tailwindcss";
+
+/*
+  SportSpot design system — Tailwind CSS v4 (theme lives in @theme, not
+  tailwind.config.ts). The orange `brand`, `sport`, and `dark` scales below are
+  the new design tokens. The existing `primary/ink/muted/surface/line/...`
+  tokens are kept so the rest of the app keeps rendering while the homepage,
+  navbar and footer adopt the new look.
+*/
+@theme {
+  /* NEW — brand (orange), sport accents, dark surfaces */
+  --color-brand-50: #fff7ed;
+  --color-brand-100: #ffedd5;
+  --color-brand-400: #fb923c;
+  --color-brand-500: #f97316;
+  --color-brand-600: #ea580c;
+  --color-brand-700: #c2410c;
+
+  --color-sport-green: #16a34a;
+  --color-sport-green2: #15803d;
+
+  --color-dark-900: #080808;
+  --color-dark-800: #111111;
+  --color-dark-700: #1c1c1c;
+  --color-dark-600: #2a2a2a;
+
+  --font-display: var(--font-bebas), 'Bebas Neue', cursive;
+  --font-sans: var(--font-inter), 'Inter', system-ui, sans-serif;
+
+  /* Existing tokens (kept for the rest of the app) */
+  --color-primary: #16a34a;
+  --color-primary-dark: #15803d;
+  --color-primary-light: #22c55e;
+  --color-surface: #ffffff;
+  --color-surface-muted: #f8fafc;
+  --color-line: #e2e8f0;
+  --color-ink: #0f172a;
+  --color-muted: #64748b;
+  --color-success: #22c55e;
+  --color-danger: #ef4444;
+  --color-warning: #f59e0b;
+  --color-info: #3b82f6;
+  --color-booked: #94a3b8;
+  --shadow-card: 0 1px 3px 0 rgb(15 23 42 / 0.08), 0 1px 2px -1px rgb(15 23 42 / 0.08);
+  --shadow-card-hover: 0 12px 24px -8px rgb(15 23 42 / 0.18);
+
+  /* Venue portal palette (portal pages only) */
+  --color-portal-sidebar: #1a2e22;
+  --color-portal-sidebar-hover: #243d2e;
+  --color-portal-sidebar-active: #16a34a;
+  --color-portal-content: #f0f4f2;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-inter), 'Inter', sans-serif;
+  background: #f8fafc;
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-green-600 hover:bg-green-700 active:bg-green-800 text-white font-semibold rounded-xl transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .btn-secondary {
+    @apply bg-white hover:bg-slate-50 border border-slate-200 text-slate-800 font-semibold rounded-xl transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .btn-ghost {
+    @apply bg-transparent hover:bg-white/10 text-white font-medium rounded-lg transition-all duration-200 flex items-center justify-center gap-2;
+  }
+  /* danger kept for delete confirmations elsewhere in the app */
+  .btn-danger {
+    @apply bg-danger hover:brightness-95 text-white font-semibold rounded-xl transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .input-field {
+    @apply w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200 text-sm font-medium;
+  }
+  .card {
+    @apply bg-white rounded-2xl border border-slate-100 shadow-[0_2px_16px_rgba(0,0,0,0.06)] hover:shadow-[0_8px_32px_rgba(0,0,0,0.12)] hover:-translate-y-0.5 transition-all duration-300;
+  }
+  /* card-hover kept as an explicit opt-in; .card already lifts on hover */
+  .card-hover {
+    @apply transition-all duration-300;
+  }
+
+  /* ===== Venue portal ===== */
+  .portal-sidebar-link {
+    @apply flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-[#243d2e] transition-all duration-150 cursor-pointer w-full;
+  }
+  .portal-sidebar-link-active {
+    @apply flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-semibold bg-[#16a34a]/20 text-white border-l-[3px] border-[#16a34a] w-full;
+  }
+  .portal-card {
+    @apply bg-white rounded-xl border border-slate-100 shadow-sm;
+  }
+  .portal-btn-primary {
+    @apply bg-[#16a34a] hover:bg-[#15803d] text-white font-semibold text-sm px-4 py-2 rounded-lg transition-all duration-200 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .portal-btn-secondary {
+    @apply bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-semibold text-sm px-4 py-2 rounded-lg transition-all duration-200 flex items-center gap-2;
+  }
+  .portal-input {
+    @apply w-full px-3 py-2 rounded-lg border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200;
+  }
+  .badge-available { @apply inline-flex px-2 py-0.5 rounded text-xs font-semibold bg-green-100 text-green-700; }
+  .badge-booked    { @apply inline-flex px-2 py-0.5 rounded text-xs font-semibold bg-red-100 text-red-600; }
+  .badge-pending   { @apply inline-flex px-2 py-0.5 rounded text-xs font-semibold bg-orange-100 text-orange-600; }
+  .badge-confirmed { @apply inline-flex px-2 py-0.5 rounded text-xs font-semibold bg-green-100 text-green-700; }
+  .badge-cancelled { @apply inline-flex px-2 py-0.5 rounded text-xs font-semibold bg-red-100 text-red-500; }
+}

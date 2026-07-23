@@ -1,0 +1,5 @@
+In the player's profile, the Positions and Experience sections should display positions according to the selected sport, so please add a Sport feature as well. Also, a user should be able to select multiple sports.
+
+Additionally, the backend is taking too long to load data everywhere.
+
+Also, the venue that I had registered is no longer showing any data. Can you tell me if you removed it?

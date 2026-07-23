@@ -1,0 +1,28 @@
+{
+  "name": "playzone-agents",
+  "version": "1.0.0",
+  "description": "PlayZone WhatsApp AI agents — booking + GPT-4o payment-screenshot verification, wired to the existing Neon Postgres backend.",
+  "main": "src/index.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "migrate": "node src/tools/migrate.js",
+    "check": "node -e \"['src/index.js'].forEach(f=>require('child_process').execSync('node --check '+f,{stdio:'inherit'}))\""
+  },
+  "dependencies": {
+    "axios": "^1.7.2",
+    "bull": "^4.16.0",
+    "dotenv": "^16.6.1",
+    "express": "^4.19.2",
+    "ioredis": "^5.4.1",
+    "openai": "^4.56.0",
+    "pg": "^8.22.0",
+    "qrcode": "^1.5.4",
+    "qrcode-terminal": "^0.12.0",
+    "whatsapp-web.js": "^1.34.7"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

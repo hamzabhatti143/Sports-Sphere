@@ -1,0 +1,9 @@
+# One-command Redis for the bot (Bull queue + conversation cache).
+# Run:  docker compose up -d      (then REDIS_URL=redis://localhost:6379 works)
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: playzone-redis
+    ports:
+      - "6379:6379"
+    restart: unless-stopped

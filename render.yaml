@@ -1,0 +1,32 @@
+# Render Blueprint — deploys the SportSpot FastAPI backend (native Python, no Docker).
+# On Render: New → Blueprint → connect this repo → it reads this file.
+# Secrets (sync:false) must be filled in the Render dashboard, not committed.
+services:
+  - type: web
+    name: sportspot-backend
+    runtime: python
+    plan: free
+    region: virginia          # close to the Neon DB (us-east-1) to reduce latency
+    rootDir: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: "3.12.7"
+      - key: ALGORITHM
+        value: HS256
+      - key: ACCESS_TOKEN_EXPIRE_MINUTES
+        value: "60"
+      - key: HOLD_MINUTES
+        value: "90"
+      # ---- fill these in the Render dashboard (Environment) ----
+      - key: DATABASE_URL      # your Neon connection string
+        sync: false
+      - key: SECRET_KEY        # JWT signing secret
+        sync: false
+      - key: BOT_URL           # WhatsApp bot admin API URL (once the bot is hosted)
+        sync: false
+      - key: BOT_ADMIN_TOKEN   # must match the bot's ADMIN_TOKEN
+        sync: false

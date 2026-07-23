@@ -105,6 +105,7 @@ async function downloadMediaManual(msg) {
 
 let client = null;
 let ready = false;
+let everReady = false; // has the client paired+connected at least once this process?
 let recovering = false;
 let lastQr = null;              // most recent QR string (for the /qr web page)
 const outbox = [];             // queued until the client is ready
@@ -165,7 +166,7 @@ function buildClient() {
     qrcode.generate(qr, { small: true });
     log.info('Scan the QR above with WhatsApp → Linked Devices  (or open http://localhost:' + (process.env.PORT || 3000) + '/qr in a browser)');
   });
-  c.on('ready', () => { ready = true; lastQr = null; log.ok('WhatsApp client ready'); flush(); });
+  c.on('ready', () => { ready = true; everReady = true; lastQr = null; log.ok('WhatsApp client ready'); flush(); });
   c.on('authenticated', () => log.ok('WhatsApp authenticated'));
   c.on('auth_failure', (m) => log.error('WhatsApp auth failure', m));
   c.on('disconnected', (reason) => {
@@ -202,11 +203,13 @@ async function recover(reason) {
   setTimeout(() => process.exit(1), 800);
 }
 
-// Every 3 minutes, if we think we're ready but the page is actually unhealthy,
-// rebuild. getState() throws/returns non-CONNECTED when the frame is detached.
+// Every 3 minutes, if the client WAS paired but the page is now unhealthy, rebuild.
+// We only monitor after the first successful pairing (everReady) — before that the
+// client is legitimately "unpaired" while waiting for the QR scan, and reacting to
+// that would restart-loop and keep regenerating the QR.
 function startWatchdog() {
   setInterval(async () => {
-    if (!client || recovering) return;
+    if (!client || recovering || !everReady) return;
     try {
       const state = await client.getState(); // 'CONNECTED' when healthy
       if (state && state !== 'CONNECTED') {

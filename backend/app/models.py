@@ -14,6 +14,11 @@ class BookingStatus(str, enum.Enum):
     pending = "pending"
     confirmed = "confirmed"
     cancelled = "cancelled"
+    # Written by the WhatsApp bot (playzone-agents) when payment verification fails;
+    # the DB's Postgres `bookingstatus` enum already has this value (added by the
+    # bot's migrate.js). It must be listed here or the ORM raises LookupError when
+    # loading such a booking row. Treated as "not confirmed" everywhere in this app.
+    payment_failed = "payment_failed"
 
 class User(Base):
     __tablename__ = "users"

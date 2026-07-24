@@ -9,7 +9,18 @@ import os
 
 Base.metadata.create_all(bind=engine)
 
-app = FastAPI(title="SportSpot API", version="1.0.0")
+# Interactive API docs (/docs, /redoc, /openapi.json) publish the full API schema
+# to anyone, so they're OFF by default and only enabled when ENABLE_DOCS is truthy
+# (set it in local dev). Production/HF leaves it unset → docs return 404.
+_docs_enabled = os.getenv("ENABLE_DOCS", "").strip().lower() in ("1", "true", "yes", "on")
+
+app = FastAPI(
+    title="SportSpot API",
+    version="1.0.0",
+    docs_url="/docs" if _docs_enabled else None,
+    redoc_url="/redoc" if _docs_enabled else None,
+    openapi_url="/openapi.json" if _docs_enabled else None,
+)
 
 # Allowed browser origins. Local dev defaults, plus any comma-separated URLs from
 # the CORS_ORIGINS env var (set your deployed frontend URL there on Render), and

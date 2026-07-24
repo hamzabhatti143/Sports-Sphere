@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.db import get_db
-from app.models import User, Venue, VenueSport, WeeklySlot, Sport, Discount
+from app.models import User, Venue, VenueSport, WeeklySlot, Sport, Discount, Booking, BookingStatus
 from app.schemas import (
     VenueCreate, VenueOut, VenueUpdate, SlotCreate, SlotUpdate, SlotOut,
     VenueWithSlotsOut, VenuePublicOut, CourtOut, SlotBasicOut,
@@ -11,9 +11,21 @@ from app.auth import require_owner
 from app.utils import make_unique_slug
 from app.pricing import discount_preview
 from decimal import Decimal
+from datetime import date
 from typing import List
 
 router = APIRouter(prefix="/venues", tags=["venues"])
+
+
+def _upcoming_confirmed_query(db: Session):
+    """Confirmed bookings dated today or later. Deleting a venue/slot cascades to
+    its bookings, which would silently wipe a customer's confirmed reservation —
+    so callers block deletion when this returns any rows. booking_date is stored
+    as an ISO 'YYYY-MM-DD' string, which sorts lexicographically by date."""
+    return db.query(Booking).filter(
+        Booking.status == BookingStatus.confirmed,
+        Booking.booking_date >= date.today().isoformat(),
+    )
 
 @router.post("", response_model=VenueOut)
 async def create_venue(req: VenueCreate, owner: User = Depends(require_owner), db: Session = Depends(get_db)):
@@ -101,6 +113,19 @@ async def delete_venue(venue_id: int, owner: User = Depends(require_owner), db: 
     venue = db.query(Venue).filter(Venue.id == venue_id, Venue.owner_id == owner.id).first()
     if not venue:
         raise HTTPException(status_code=404, detail="Venue not found or you don't have access")
+
+    conflicts = (
+        _upcoming_confirmed_query(db)
+        .join(WeeklySlot, Booking.slot_id == WeeklySlot.id)
+        .filter(WeeklySlot.venue_id == venue_id)
+        .count()
+    )
+    if conflicts:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=f"This venue has {conflicts} upcoming confirmed booking(s). "
+                   "Cancel or complete them before deleting.",
+        )
 
     db.delete(venue)  # cascades to slots and their bookings
     db.commit()
@@ -218,6 +243,14 @@ async def delete_slot(venue_id: int, slot_id: int, owner: User = Depends(require
     slot = db.query(WeeklySlot).filter(WeeklySlot.id == slot_id, WeeklySlot.venue_id == venue_id).first()
     if not slot:
         raise HTTPException(status_code=404, detail="Slot not found")
+
+    conflicts = _upcoming_confirmed_query(db).filter(Booking.slot_id == slot_id).count()
+    if conflicts:
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=f"This slot has {conflicts} upcoming confirmed booking(s). "
+                   "Cancel or complete them before deleting.",
+        )
 
     db.delete(slot)
     db.commit()

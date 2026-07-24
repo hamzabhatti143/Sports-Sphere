@@ -194,7 +194,7 @@ export default function DashboardPage() {
         onClose={() => setDeleteVenue(null)}
         onConfirm={handleDeleteVenue}
         title={`Delete ${deleteVenue?.name ?? 'venue'}?`}
-        description="This will also remove all associated slots and bookings, and cannot be undone."
+        description="This will also remove all associated slots and past/pending bookings, and cannot be undone. Venues with upcoming confirmed bookings can't be deleted."
         confirmLabel="Delete Venue"
         loading={deleting}
       />
